@@ -18,6 +18,9 @@ export interface Detection {
 }
 
 export interface PredictionResult {
+    modelAvailable?: boolean;
+    mode?: string;
+    message?: string;
     filename: string;
     url: string;
     detections: Detection[];

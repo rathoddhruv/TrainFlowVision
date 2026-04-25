@@ -191,16 +191,24 @@ class MLService:
             bufsize=1
         )
 
+        run_logs = []
         for line in process.stdout:
             line = line.strip()
             if line:
                 self.log_message(line)
+                run_logs.append(line)
 
         process.wait()
 
         if process.returncode != 0:
-            self.log_message(f"Training failed with code {process.returncode}")
-            raise RuntimeError(f"Training failed")
+            error_msg = f"Training failed with code {process.returncode}"
+            if run_logs:
+                # Capture last few lines of the specific training run
+                last_logs = " | ".join(run_logs[-3:])
+                error_msg += f". Details: {last_logs}"
+            
+            self.log_message(error_msg)
+            raise RuntimeError(error_msg)
 
         self.log_message("Training completed successfully.")
         self.log_message("Reloading model...")

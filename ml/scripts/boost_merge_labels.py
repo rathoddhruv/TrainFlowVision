@@ -32,7 +32,7 @@ from ml.config.paths import (
 )
 from ml.config.classes import CLASS_MAP_REVERSE
 
-merged_root = TRAINING_IMAGES_DIR.parent
+merged_root = merged_images.parent
 ORIGINAL_IMAGES = ML_TEMP_DIR / "yolo_dataset" / "images" / "train"
 ORIGINAL_LABELS = ML_TEMP_DIR / "yolo_dataset" / "labels" / "train"
 WRONG_LABEL_DIR = ML_DIR / "wrong_labels"
@@ -163,12 +163,12 @@ print("Cleaned up used active and wrong labels as well as test images")
 # both training and validation. ``names`` maps class indices to class names.
 dataset_yaml = {
     "path": str(merged_root),
-    "train": "images/train",
-    "val": "images/train",
+    "train": "images",
+    "val": "images",
     "names": {idx: name for idx, name in CLASS_MAP_REVERSE.items()},
 }
 
-merged_images_dir = merged_root / "images/train"
+merged_images_dir = merged_root / "images"
 if not any(merged_images_dir.glob("*")):
     print(" No merged training images found. Exiting.")
     exit(1)
@@ -186,7 +186,7 @@ print("Dataset ready at:", merged_root)
 # label files and sanitise them. Any line that does not consist of exactly
 # five space-separated numeric values is dropped. If any corrections are made,
 # the original file is backed up with a ``.bak`` extension.
-LABEL_FOLDER = merged_root / "labels/train"
+LABEL_FOLDER = merged_root / "labels"
 for label_file in LABEL_FOLDER.glob("*.txt"):
     lines = label_file.read_text().strip().splitlines()
     cleaned = []

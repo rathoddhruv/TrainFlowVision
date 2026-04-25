@@ -157,6 +157,15 @@ export class ReviewComponent implements OnInit, OnDestroy {
         this.api.predict(item.file).subscribe({
             next: (res: any) => {
                 this.isLoading = false;
+
+                if (res.modelAvailable === false) {
+                    res.detections = [];
+                    this.prediction = res;
+                    this.loadImage(res.url);
+                    this.showToast('Cold Start: Draw manual annotations');
+                    return;
+                }
+
                 res.detections = res.detections.map((d: any) => {
                     const normalizedClass = this.normalizeClassName(d.class);
                     // Detections not strictly matching the backend taxonomy list are flagged as defaults.
@@ -532,7 +541,7 @@ export class ReviewComponent implements OnInit, OnDestroy {
                     class: this.lastSelectedClass || (this.classNames[0] || 'Unknown'),
                     confidence: 1.0,
                     box: [x1, y1, x2, y2],
-                    reviewStatus: 'pending',
+                    reviewStatus: 'correct',
                     isManual: true
                 });
                 // Mount active index mapping automatically onto the dynamically injected manual overlay natively

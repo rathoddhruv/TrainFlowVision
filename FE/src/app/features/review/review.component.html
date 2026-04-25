@@ -16,6 +16,10 @@
         </div>
 
         <div class="flex items-center gap-4">
+            <div *ngIf="prediction?.mode === 'cold_start'" 
+                class="bg-amber-500/10 text-amber-400 text-[10px] font-bold px-3 py-1 rounded border border-amber-500/20">
+                Cold Start Mode: Draw manual annotations
+            </div>
             <div class="flex items-center bg-[#0f172a] rounded overflow-hidden border border-slate-700">
                 <span class="px-2 py-1 text-[9px] uppercase font-bold text-slate-500 bg-slate-800/50">Progress</span>
                 <span class="px-3 py-1 font-bold text-indigo-400 font-mono text-xs">{{ queueStats.current }} / {{
@@ -219,7 +223,7 @@
                     <button (click)="accept()" [disabled]="isLoading"
                         class="flex flex-col items-center justify-center py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all shadow-lg group">
                         <span class="text-[9px] font-black tracking-widest uppercase">{{ isLoading ? 'Saving...' :
-                            'Save & Train' }}</span>
+                            (prediction?.mode === 'cold_start' ? 'Save & Train First Model' : 'Save & Train') }}</span>
                         <span class="text-[7px] opacity-70 font-mono">ENTER</span>
                     </button>
                 </div>
