@@ -1,6 +1,6 @@
 # FOLDER_STRUCTURE
 
-This document explains the organization of the ML layer inside PlantPilotAI.
+This document explains the organization of the ML layer inside TrainFlowVision.
 
 ## Core Directories
 

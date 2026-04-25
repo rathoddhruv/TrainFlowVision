@@ -39,4 +39,4 @@ app.include_router(pipeline_router, prefix="/pipeline", tags=["pipeline_legacy"]
 
 @app.get("/")
 def root():
-    return {"msg": "PlantPilotAI Backend Running"}
+    return {"msg": "TrainFlowVision Backend Running"}

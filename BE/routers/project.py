@@ -6,7 +6,7 @@ from typing import List
 from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
 
 from BE.services.ml_service import ml_service
-from ML.config_loader import REVIEW_QUEUE_DIR, TEMP_DIR
+from ml.config_loader import REVIEW_QUEUE_DIR, TEMP_DIR
 
 router = APIRouter()
 
@@ -42,7 +42,7 @@ async def init_project(
     model: str = "yolov8n.pt"
 ):
     """
-    Initializes the PlantPilotAI environment from a Label Studio ZIP dataset.
+    Initializes the TrainFlowVision environment from a Label Studio ZIP dataset.
     
     Accepts a compressed ZIP payload from the frontend, unpacks the dataset
     components securely, normalizes all annotations into internal schema, and
@@ -142,7 +142,7 @@ def get_pending_images():
 @router.get("/classes")
 def get_classes():
     """Extract class names from the currently loaded model and the global tracker."""
-    from ML.config_loader import CLASS_FILE
+    from ml.config_loader import CLASS_FILE
     
     classes = set()
     

@@ -35,8 +35,8 @@ export class ReviewComponent implements OnInit, OnDestroy {
     private toastTimeout: any;
     private highlightTimeout: any;
 
-    classOptions = ['Dandelion', 'Hydrangea'];
-    classNames = ['Dandelion', 'Hydrangea'];
+    classOptions = ['Object', 'Class'];
+    classNames = ['Object', 'Class'];
 
     lastSelectedClass: string | null = null;
     isAddingNewClass: boolean = false;

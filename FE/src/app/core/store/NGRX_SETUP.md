@@ -1,7 +1,7 @@
 # NGRX State Management Setup Guide
 
 ## Overview
-This file documents how to install and configure NGRX for the PlantPilot application.
+This file documents how to install and configure NGRX for the TrainFlowVision application.
 
 ## Installation Steps
 

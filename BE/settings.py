@@ -1,13 +1,13 @@
 # settings.py
 from pathlib import Path
-from ML.config_loader import (
+from ml.config_loader import (
     ML_ROOT,
     REVIEW_QUEUE_DIR,
     IMPORT_DATA_DIR,
     TRAINING_DATA_DIR
 )
 
-# project root = .../PlantPilotAI-Fullstack
+# project root = .../TrainFlowVision
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 # paths

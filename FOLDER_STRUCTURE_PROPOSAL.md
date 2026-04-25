@@ -1,7 +1,7 @@
 # Folder Restructuring Proposal
 
 ## Overview
-This document proposes a clean architecture for the PlantPilotAI-Fullstack project. The goal is to organize the codebase into logical directories, making it easier to manage and maintain.
+This document proposes a clean architecture for the TrainFlowVision project. The goal is to organize the codebase into logical directories, making it easier to manage and maintain.
 
 ## Proposed Directory Structure
 ```
@@ -68,4 +68,4 @@ ng new fe --routing --style=scss
 Update the `README.md` file to include the new directory structure and instructions for setting up and running the project.
 
 ## Summary
-This proposed folder structure aims to improve the organization and maintainability of the PlantPilotAI-Fullstack project. By following these instructions, you can migrate your existing codebase into a more organized format.
+This proposed folder structure aims to improve the organization and maintainability of the TrainFlowVision project. By following these instructions, you can migrate your existing codebase into a more organized format.

@@ -1,7 +1,7 @@
-# PlantPilot Implementation Summary - April 19, 2026
+# TrainFlowVision Implementation Summary - April 19, 2026
 
 ## Overview
-Completed comprehensive improvements to PlantPilot's active learning pipeline including bug fixes, batch processing, state management, and training optimization.
+Completed comprehensive improvements to TrainFlowVision's active learning pipeline including bug fixes, batch processing, state management, and training optimization.
 
 ---
 

@@ -15,7 +15,7 @@ export interface LogEntry {
 }
 
 /**
- * Main dashboard component acting as the entrance to the PlantPilotAI application.
+ * Main dashboard component acting as the entrance to the TrainFlowVision application.
  * Manages dataset initialization, ZIP uploads, single/batch inference queues,
  * and background neural training status polling.
  */
@@ -104,16 +104,16 @@ export class UploadComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        const savedMode = localStorage.getItem('plantpilot_app_mode');
+        const savedMode = localStorage.getItem('trainflow_app_mode');
         if (savedMode === 'train' || savedMode === 'test') {
             this.appMode = savedMode;
         }
 
-        this.trainEpochs = Number(localStorage.getItem('plantpilot_train_epochs')) || 40;
-        this.trainImgsz = Number(localStorage.getItem('plantpilot_train_imgsz')) || 960;
-        const savedModel = localStorage.getItem('plantpilot_train_model');
+        this.trainEpochs = Number(localStorage.getItem('trainflow_train_epochs')) || 40;
+        this.trainImgsz = Number(localStorage.getItem('trainflow_train_imgsz')) || 960;
+        const savedModel = localStorage.getItem('trainflow_train_model');
         this.trainModel = savedModel || 'yolov8n.pt';
-        this.testConfidence = Number(localStorage.getItem('plantpilot_test_conf')) || 0.25;
+        this.testConfidence = Number(localStorage.getItem('trainflow_test_conf')) || 0.25;
 
         // 1. Initial Data Load
         this.refreshAllData();
@@ -211,14 +211,14 @@ export class UploadComponent implements OnInit, OnDestroy {
 
     setMode(mode: 'train' | 'test') {
         this.appMode = mode;
-        localStorage.setItem('plantpilot_app_mode', mode);
+        localStorage.setItem('trainflow_app_mode', mode);
     }
 
     saveParams() {
-        localStorage.setItem('plantpilot_train_epochs', this.trainEpochs.toString());
-        localStorage.setItem('plantpilot_train_imgsz', this.trainImgsz.toString());
-        localStorage.setItem('plantpilot_train_model', this.trainModel);
-        localStorage.setItem('plantpilot_test_conf', this.testConfidence.toString());
+        localStorage.setItem('trainflow_train_epochs', this.trainEpochs.toString());
+        localStorage.setItem('trainflow_train_imgsz', this.trainImgsz.toString());
+        localStorage.setItem('trainflow_train_model', this.trainModel);
+        localStorage.setItem('trainflow_test_conf', this.testConfidence.toString());
     }
 
     ngOnDestroy() {
@@ -275,7 +275,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Initializes a fresh PlantPilotAI project from an uploaded Label Studio zip.
+     * Initializes a fresh TrainFlowVision project from an uploaded Label Studio zip.
      * Triggers the backend extraction and subsequent native YOLO base training loop.
      */
     startZipFlow(file: File) {

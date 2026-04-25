@@ -1,7 +1,7 @@
 # Frontend Technical Plan
 
 ## Overview
-This document provides a technical plan for setting up the Angular frontend of the PlantPilotAI-Fullstack project. The goal is to create a user-friendly interface that allows users to upload images, view predictions, correct labels, and manage classes.
+This document provides a technical plan for setting up the Angular frontend of the TrainFlowVision project. The goal is to create a user-friendly interface that allows users to upload images, view predictions, correct labels, and manage classes.
 
 ## Project Setup
 1. **Set Up Angular Project**:
@@ -204,4 +204,4 @@ export class AppRoutingModule { }
 ```
 
 ## Summary
-This technical plan outlines the setup, components, services, and routing for the Angular frontend of the PlantPilotAI-Fullstack project. By following these instructions, you can build a user-friendly interface that interacts seamlessly with the backend API.
+This technical plan outlines the setup, components, services, and routing for the Angular frontend of the TrainFlowVision project. By following these instructions, you can build a user-friendly interface that interacts seamlessly with the backend API.

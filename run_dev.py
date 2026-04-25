@@ -8,7 +8,7 @@ BE_DIR = ROOT_DIR / "BE"
 FE_DIR = ROOT_DIR / "FE"
 
 def run_dev():
-    print("Starting PlantPilotAI Fullstack...")
+    print("Starting TrainFlowVision Fullstack...")
 
     # Install dependencies
     print("Installing dependencies...")

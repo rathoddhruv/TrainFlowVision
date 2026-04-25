@@ -2,7 +2,7 @@
 File: config_loader.py
 
 Purpose:
-Centralized configuration manager for PlantPilotAI ML Pipeline.
+Centralized configuration manager for TrainFlowVision ML Pipeline.
 Defines unified directory structures, resolves paths dynamically,
 and loads application settings. Keeps paths strictly structured 
 into models, data, and runs.

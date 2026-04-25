@@ -1,6 +1,6 @@
 # ACTIVE_LEARNING_FLOW
 
-This document outlines the end-to-end active learning workflow utilized by PlantPilotAI.
+This document outlines the end-to-end active learning workflow utilized by TrainFlowVision.
 
 ## Workflow Execution
 

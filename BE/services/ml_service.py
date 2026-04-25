@@ -8,12 +8,12 @@ from pathlib import Path
 from ultralytics import YOLO
 
 from BE.settings import IMPORT_ZIP_SCRIPT, ML_PIPELINE
-from ML.config_loader import (
+from ml.config_loader import (
     RUNS_DIR, IMPORT_DATA_DIR, TRAINING_DATA_DIR, REVIEW_QUEUE_DIR,
     REVIEWED_DATA_DIR, TEMP_DIR, ML_ROOT, MODEL_HISTORY_DIR, SKIPPED_DIR
 )
 
-logger = logging.getLogger("plantpilot")
+logger = logging.getLogger("trainflow")
 
 import json
 import threading
@@ -266,7 +266,7 @@ class MLService:
         return detections
 
     def _get_or_create_class_id(self, class_name: str) -> int:
-        from ML.config_loader import CLASS_FILE
+        from ml.config_loader import CLASS_FILE
         # 1. Read existing classes from file if exists
         classes = []
         if CLASS_FILE.exists():

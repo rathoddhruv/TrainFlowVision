@@ -238,7 +238,7 @@
     <div *ngIf="isAddingNewClass" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#020617]/80 backdrop-blur-sm">
         <div class="bg-[#0f172a] border border-slate-700 rounded-xl p-6 w-96 shadow-2xl shadow-black/80 ring-1 ring-white/10">
             <h3 class="text-white font-bold tracking-tight mb-4 text-base">Add New Concept</h3>
-            <input type="text" [(ngModel)]="newClassName" placeholder="e.g. Tomato, Weed, Leaf..." 
+            <input type="text" [(ngModel)]="newClassName" placeholder="e.g. Object, Category, Class..." 
                 class="w-full bg-[#1e293b] border border-slate-600 text-white rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none mb-5 font-medium transition-all" 
                 (keyup.enter)="confirmNewClass()">
             <div class="flex justify-end gap-3">

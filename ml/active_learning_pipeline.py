@@ -2,7 +2,7 @@
 File: active_learning_pipeline.py
 
 Purpose:
-Runs the active learning training flow for PlantPilotAI.
+Runs the active learning training flow for TrainFlowVision.
 
 This file takes human reviewed labels and manual annotations,
 merges them into the training dataset, retrains the YOLO model,
