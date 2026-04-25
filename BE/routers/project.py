@@ -6,7 +6,7 @@ from typing import List
 from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
 
 from BE.services.ml_service import ml_service
-from ml.config_loader import REVIEW_QUEUE_DIR, TEMP_DIR
+from ml.config.paths import REVIEW_QUEUE_DIR, ML_TEMP_DIR as TEMP_DIR
 
 router = APIRouter()
 
@@ -142,7 +142,7 @@ def get_pending_images():
 @router.get("/classes")
 def get_classes():
     """Extract class names from the currently loaded model and the global tracker."""
-    from ml.config_loader import CLASS_FILE
+    from ml.config.classes import CLASS_FILE
     
     classes = set()
     

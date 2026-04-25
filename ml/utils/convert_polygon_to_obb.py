@@ -60,4 +60,4 @@ def convert_labels(label_folder):
             print(f"All labels in {file.name} were invalid after conversion")
 
 if __name__ == "__main__":
-    convert_labels("data/yolo_dataset/labels/train")
+    convert_labels("data/temp/yolo_dataset/labels/train")
