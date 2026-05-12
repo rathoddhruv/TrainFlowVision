@@ -121,6 +121,8 @@ class MLService:
 
         # Look for the absolute latest best.pt across ALL subfolders
         all_weights = list(runs_dir.rglob("weights/best.pt")) if runs_dir.exists() else []
+        if MODEL_HISTORY_DIR.exists():
+            all_weights.extend(list(MODEL_HISTORY_DIR.rglob("weights/best.pt")))
         if all_weights:
             # Sort by modification time, newest first
             newest_weight = max(all_weights, key=lambda p: p.stat().st_mtime)

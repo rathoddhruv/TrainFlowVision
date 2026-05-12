@@ -213,14 +213,29 @@ if __name__ == '__main__':
         print("No images found for training.")
         sys.exit(1)
 
-    _archive_existing_train()
+    archived_dir = _archive_existing_train()
     
     # Select model
     # Priority: 1. previous best.pt, 2. user arg model
     MODEL_PATH = args.model
-    potential_best = RUNS_DETECT / "train" / "weights" / "best.pt"
-    if potential_best.exists():
-        MODEL_PATH = str(potential_best)
+    
+    if MODEL_PATH == "best.pt":
+        all_weights = []
+        if MODEL_HISTORY_DIR.exists():
+            all_weights.extend(list(MODEL_HISTORY_DIR.rglob("weights/best.pt")))
+        if RUNS_DETECT.exists():
+            all_weights.extend(list(RUNS_DETECT.rglob("weights/best.pt")))
+            
+        if all_weights:
+            MODEL_PATH = str(max(all_weights, key=lambda p: p.stat().st_mtime))
+        else:
+            fallback = ML_ROOT / "models" / "base" / "yolov8n.pt"
+            MODEL_PATH = str(fallback) if fallback.exists() else "yolov8n.pt"
+    else:
+        # Check if it's a base model name in our base directory
+        potential_base = ML_ROOT / "models" / "base" / MODEL_PATH
+        if potential_base.exists() and not Path(MODEL_PATH).is_absolute():
+            MODEL_PATH = str(potential_base)
     
     print(f"Training from: {MODEL_PATH}")
     
