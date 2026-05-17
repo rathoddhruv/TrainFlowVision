@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# Frontend
+FE/node_modules/
+FE/dist/
+FE/.angular/
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.env
+
+# ML specific - Huge data and models
+ml/data/
+ml/models/
+ml/runs/
+ml/temp/
+eval_output/
+static/images/
+*.pt
+*.onnx
+*.weights
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
