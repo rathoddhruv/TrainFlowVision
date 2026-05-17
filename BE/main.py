@@ -6,12 +6,18 @@ from BE.routers import project, inference
 # retaining old routers for reference or backward compat if needed
 from BE.routers.pipeline import router as pipeline_router
 from BE.routers.uploads import router as uploads_router
+from BE.database import engine, Base
+import BE.models
 
 import logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 )
+
+# Initialize Database
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 

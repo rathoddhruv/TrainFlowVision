@@ -1,18 +1,34 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: trainflow
+      POSTGRES_PASSWORD: trainflow
+      POSTGRES_DB: trainflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
     ports:
       - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://trainflow:trainflow@postgres:5432/trainflow
     volumes:
-      - ./ml:/app/ml
       - ./BE:/app/BE
-    env_file:
-      - .env
+      - ./ml:/app/ml
+      - ml_data:/app/ml/data
+      - ml_models:/app/ml/models
+      - ml_runs:/app/ml/runs
     depends_on:
+      - postgres
       - frontend
 
   frontend:
@@ -21,3 +37,13 @@ services:
       dockerfile: Dockerfile.frontend
     ports:
       - "4200:80"
+
+volumes:
+  ml_data:
+    name: trainflow_data
+  ml_models:
+    name: trainflow_models
+  ml_runs:
+    name: trainflow_runs
+  pgdata:
+    name: trainflow_pgdata
