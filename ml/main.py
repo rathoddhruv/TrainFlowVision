@@ -14,7 +14,7 @@ BATCH_SIZE = 16
 NUM_EPOCHS = 50
 NUM_CLASSES = len(CLASS_NAMES)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-MODEL_PATH = "model/plant_classifier.pth"
+MODEL_PATH = "model/trainflow_model.pth"
 
 
 # data transforms

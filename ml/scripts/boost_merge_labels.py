@@ -1,0 +1,212 @@
+"""
+File: boost_merge_labels.py
+
+Purpose:
+Takes human-reviewed active learning annotations and merges them
+into the primary training dataset layout before retraining.
+
+Reads from:
+- ML/data/test_images/ (or whatever TEST_IMAGE_FOLDER is configured to)
+- ML/active_labels/
+- ML/wrong_labels/
+
+Writes to:
+- ML/data/yolo_merged/ (the combined ultimate training directory)
+"""
+
+import shutil
+from pathlib import Path
+
+import yaml
+
+# Import configuration paths and helpers. In addition to the existing imports,
+# we bring in ``WRONG_LABEL_DIR`` so that we can handle false positive
+# detections recorded during manual review.
+from ml.config.paths import (
+    REVIEWED_LABELS_DIR as ACTIVE_LABEL_DIR,
+    ML_DIR,
+    TRAINING_IMAGES_DIR as merged_images,
+    TRAINING_LABELS_DIR as merged_labels,
+    ML_TEMP_DIR,
+    REVIEW_QUEUE_DIR as TEST_IMAGE_FOLDER,
+)
+from ml.config.classes import CLASS_MAP_REVERSE
+
+merged_root = merged_images.parent
+ORIGINAL_IMAGES = ML_TEMP_DIR / "yolo_dataset" / "images" / "train"
+ORIGINAL_LABELS = ML_TEMP_DIR / "yolo_dataset" / "labels" / "train"
+WRONG_LABEL_DIR = ML_DIR / "wrong_labels"
+YOLO_DATASET_YAML = ML_DIR / "yolo_dataset.yaml"
+
+
+
+# Ensure output directories exist
+for path in [merged_images, merged_labels]:
+    path.mkdir(parents=True, exist_ok=True)
+
+# === COPY ORIGINAL IMAGES AND LABELS (ONLY NEW ONES) ===
+#
+# To avoid retraining on the same original dataset repeatedly, only copy
+# original images that haven't been merged yet. This preserves the base dataset
+# while allowing incremental active learning updates.
+image_files = list(ORIGINAL_IMAGES.glob("*"))
+original_copied = 0
+for img_file in image_files:
+    dest_image = merged_images / img_file.name
+    # Only copy if not already in merged dataset
+    if not dest_image.exists():
+        shutil.copy(img_file, dest_image)
+        label_file = ORIGINAL_LABELS / f"{img_file.stem}.txt"
+        if label_file.exists():
+            shutil.copy(label_file, merged_labels / label_file.name)
+        original_copied += 1
+    else:
+        # Image already exists in merged - just ensure its label is there
+        label_file = ORIGINAL_LABELS / f"{img_file.stem}.txt"
+        dest_label = merged_labels / f"{img_file.stem}.txt"
+        if label_file.exists() and not dest_label.exists():
+            shutil.copy(label_file, dest_label)
+
+# === COPY ACTIVE LABELS AND MATCHED IMAGES ===
+#
+# ``ACTIVE_LABEL_DIR`` contains user-approved annotations collected during
+# ``manual_review.py``. For each label file in this directory, copy it into
+# ``merged_labels`` and also copy the corresponding test image into
+# ``merged_images``. Afterwards, remove both the label file and the source image
+# from their respective folders to keep things tidy.
+active_files = list(ACTIVE_LABEL_DIR.glob("*.txt"))
+copied_images = 0
+for label_path in active_files:
+    shutil.copy(label_path, merged_labels / label_path.name)
+    found = False
+    for ext in [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]:
+        image_path = TEST_IMAGE_FOLDER / f"{label_path.stem}{ext}"
+        if image_path.exists():
+            shutil.copy(image_path, merged_images / image_path.name)
+            # Only unlink if both are successfully copied to merged folder
+            if (merged_labels / label_path.name).exists() and (merged_images / image_path.name).exists():
+                image_path.unlink()
+                label_path.unlink()
+                copied_images += 1
+                found = True
+            break
+    if not found:
+        print(f"[WARN] No image found for {label_path.name} in {TEST_IMAGE_FOLDER}")
+
+# === ORPHAN RECOVERY ===
+# If images are in TEST_IMAGE_FOLDER but labels are already in merged_labels,
+# copy them over now.
+for label_path in merged_labels.glob("*.txt"):
+    img_found_locally = False
+    # Check if image is already in merged_images
+    for ext in [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]:
+        if (merged_images / f"{label_path.stem}{ext}").exists():
+            img_found_locally = True
+            break
+    
+    if not img_found_locally:
+        # Try to recover from TEST_IMAGE_FOLDER
+        for ext in [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]:
+            recover_path = TEST_IMAGE_FOLDER / f"{label_path.stem}{ext}"
+            if recover_path.exists():
+                print(f"[RECOVERY] Reuniting orphan label {label_path.name} with image.")
+                shutil.copy(recover_path, merged_images / recover_path.name)
+                recover_path.unlink()
+                copied_images += 1
+                break
+
+# === COPY WRONG LABELS AS NEGATIVE IMAGES ===
+#
+# Files in ``WRONG_LABEL_DIR`` represent detections that the user marked as
+# incorrect (false positives). According to Ultralytics guidance, training with
+# background images improves a model's ability to reduce false positives by
+# teaching it what NOT to detect. To incorporate these examples, we copy the
+# corresponding image into ``merged_images`` and create an **empty** annotation
+# file in ``merged_labels``. An empty label file signals that the image contains
+# no objects, reinforcing it as a negative sample.
+wrong_files = list(WRONG_LABEL_DIR.glob("*.txt"))
+negative_copied = 0
+for wrong_path in wrong_files:
+    empty_label_path = merged_labels / wrong_path.name
+    empty_label_path.parent.mkdir(parents=True, exist_ok=True)
+    empty_label_path.write_text("")
+    for ext in [".jpg", ".jpeg", ".png"]:
+        image_path = TEST_IMAGE_FOLDER / f"{wrong_path.stem}{ext}"
+        if image_path.exists():
+            dest_img = merged_images / image_path.name
+            if not dest_img.exists():
+                shutil.copy(image_path, dest_img)
+            try:
+                image_path.unlink()
+            except Exception:
+                pass
+            negative_copied += 1
+            break
+    wrong_path.unlink()
+
+# === DATASET MERGE SUMMARY ===
+print(
+    f"Copied {original_copied} NEW original images (out of {len(image_files)} total) and {len(active_files)} active labels"
+)
+print(
+    f"Copied {copied_images} new images from the test folder and removed them afterward"
+)
+print(f"Copied {negative_copied} negative images from wrong labels")
+print(f"Total dataset size: {len(list(merged_images.glob('*')))} images, {len(list(merged_labels.glob('*.txt')))} labels")
+print("Cleaned up used active and wrong labels as well as test images")
+
+# === GENERATE YOLO DATASET YAML ===
+#
+# After merging all sources of data, construct a YAML file that describes the
+# dataset for Ultralytics YOLO training. The ``train`` and ``val`` entries both
+# point to ``images/train`` so that the model uses the full merged dataset for
+# both training and validation. ``names`` maps class indices to class names.
+dataset_yaml = {
+    "path": str(merged_root),
+    "train": "images",
+    "val": "images",
+    "names": {idx: name for idx, name in CLASS_MAP_REVERSE.items()},
+}
+
+merged_images_dir = merged_root / "images"
+if not any(merged_images_dir.glob("*")):
+    print(" No merged training images found. Exiting.")
+    exit(1)
+
+with open(YOLO_DATASET_YAML, "w") as f:
+    yaml.dump(dataset_yaml, f, sort_keys=False)
+
+print(f"yolo_dataset.yaml updated at {YOLO_DATASET_YAML}")
+print("Dataset ready at:", merged_root)
+
+# === FIX CORRUPT LABELS ===
+#
+# Occasionally annotation files can be malformed (e.g. missing values or
+# non-numeric entries). To guard against training crashes, iterate through all
+# label files and sanitise them. Any line that does not consist of exactly
+# five space-separated numeric values is dropped. If any corrections are made,
+# the original file is backed up with a ``.bak`` extension.
+LABEL_FOLDER = merged_root / "labels"
+for label_file in LABEL_FOLDER.glob("*.txt"):
+    lines = label_file.read_text().strip().splitlines()
+    cleaned = []
+    corrupted = False
+    for line in lines:
+        parts = line.strip().split()
+        # YOLO Box: 5 parts; YOLO Seg/OBB: >5 parts
+        if len(parts) < 5:
+            corrupted = True
+            continue
+        try:
+            # Ensure all parts are numeric
+            floats = [float(x) for x in parts]
+            cleaned.append(" ".join(map(str, floats)))
+        except ValueError:
+            corrupted = True
+    if corrupted:
+        backup = label_file.with_suffix(".bak")
+        if backup.exists():
+            backup.unlink()
+        label_file.rename(backup)
+        label_file.write_text("\n".join(cleaned))
+        print(f"Fixed: {label_file.name}, backup saved as {backup.name}")

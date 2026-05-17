@@ -16,7 +16,7 @@ device: 0             # use GPU 0 (your RTX 3090)
 patience: 40          # early stopping: if val loss doesn't improve for X epochs, stop
 
 # COLOR augmentations (teaches model to be robust to lighting & color changes)
-hsv_h: 0.01          # random hue shift (good for plants in varying light)
+hsv_h: 0.01          # random hue shift (good for objects in varying light)
 hsv_s: 0.5            # random saturation shift
 hsv_v: 0.3            # random brightness shift
 

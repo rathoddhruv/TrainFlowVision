@@ -1,6 +1,7 @@
-path: data/yolo_merged
-train: images/train
-val: images/train
+path: C:/Data/Projects/TrainFlowVision/ml/data/training
+train: images
+val: images
 names:
   0: dandelion
   1: hydrangea
+  2: sunflower

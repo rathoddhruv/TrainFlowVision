@@ -4,7 +4,8 @@ This document details the internal scripts driving the ML orchestration layer.
 
 ## Execution Scripts
 
-- **`config_loader.py`**:
+- **`config/paths.py` & `config/classes.py`**:
+  Central configuration system replacing the old `config_loader.py`.
   The central configuration core. Maps environment paths exactly to structured folders (`models/`, `data/`, `runs/`) ensuring zero path fragmentation across the monolithic application.
 
 - **`active_learning_pipeline.py`**:

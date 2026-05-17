@@ -1,23 +1,49 @@
-# FOLDER_STRUCTURE
+# FOLDER STRUCTURE
 
-This document explains the organization of the ML layer inside PlantPilotAI.
+The ML component of TrainFlowVision follows a strict and highly organized folder structure to ensure clear separation of concerns, reproducibility, and a pristine deployment environment.
 
-## Core Directories
+```text
+ml/
+├── config/                  # Configuration and Path Centralization
+│   ├── classes.py           # Class map and ontology management
+│   └── paths.py             # Absolute path constants for all scripts
+│
+├── data/                    # Dataset Management (Ignored by Git)
+│   ├── uploads/             # Raw incoming files (not yet reviewed)
+│   ├── review_queue/        # Files pending human review
+│   ├── reviewed/            # Human-verified annotations
+│   │   ├── images/
+│   │   └── labels/
+│   ├── skipped/             # Ignored or suppressed images
+│   ├── training/            # Active YOLO dataset for the next epoch
+│   │   ├── images/
+│   │   └── labels/
+│   └── temp/                # Extracts, caches, and working directories
+│
+├── docs/                    # ML Specific Documentation
+│   ├── ACTIVE_LEARNING_FLOW.md
+│   ├── FOLDER_STRUCTURE.md
+│   └── ML_PIPELINE.md
+│
+├── models/                  # Versioned Weight Storage
+│   ├── base/                # Initial weights (e.g., yolov8n.pt)
+│   ├── current/             # The active model (best.pt) used by the API
+│   └── history/             # Archived iterations from previous active learning cycles
+│
+├── runs/                    # Ephemeral Ultralytics Training Outputs (Ignored by Git)
+│   └── detect/
+│       └── train/           # The active training run folder
+│
+├── scripts/                 # Core Execution Logic
+│   ├── active_learning_pipeline.py # Training orchestrator
+│   ├── boost_merge_labels.py       # Prepares the `training/` dataset
+│   ├── import_yolo_dataset_from_zip.py # Initial bootstrap logic
+│   └── manual_review.py            # Local CV2 labeling UI (legacy/fallback)
+│
+└── utils/                   # Specialized helper functions
+    ├── cleanup_dataset_folders.py
+    └── fix_non_normalized_labels.py
+```
 
-- **`data/`**: The central repository for all images and datasets.
-  - **`data/uploads/`** (or `test_images`): Where front-end uploads wait patiently for review.
-  - **`data/yolo_dataset/`**: Initial unpacked base dataset imported from Label Studio.
-  - **`data/yolo_merged/`**: The active training dataset that YOLO utilizes. This constantly absorbs newly reviewed files.
-  - **`data/temp/`**: Transitive directory for zips, models, or processing items.
-
-- **`models/`**: The long-term persistent storage tracker for model states.
-  - **`models/base/`**: Holds core foundation models (e.g., `yolov8n.pt`, `yolov8s.pt`).
-  - **`models/current/`**: The currently deployed model serving inference and acting as the foundation for the next active learning cycle.
-  - **`models/history/`**: Previous refined models archived after each iteration.
-
-- **`runs/`**: Strict log/output directory for Ultralytics YOLO logic natively.
-  - **`runs/detect/train/`**: The active training iteration. Archival scripts frequently move completed ones out of here to `models/history/`.
-
-- **`active_labels/`**: Temporary staging folder where user-accepted annotations rest before being merged into `data/yolo_merged/`.
-
-- **`wrong_labels/`**: Temporary staging folder where wildly flawed inferences are recorded as strict negatives before being merged.
+### Git Policy
+By default, all `data/`, `models/current/`, `models/history/`, and `runs/` are `.gitignore`d to prevent bloat. Only `README.md` markers remain to preserve folder scaffolding.

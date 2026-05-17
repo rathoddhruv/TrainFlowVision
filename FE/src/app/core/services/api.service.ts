@@ -18,6 +18,9 @@ export interface Detection {
 }
 
 export interface PredictionResult {
+    modelAvailable?: boolean;
+    mode?: string;
+    message?: string;
     filename: string;
     url: string;
     detections: Detection[];
@@ -57,7 +60,7 @@ export class ApiService {
     constructor(private http: HttpClient) { }
 
     /**
-     * Initializes the PlantPilotAI environment from a Label Studio ZIP dataset.
+     * Initializes the TrainFlowVision environment from a Label Studio ZIP dataset.
      * Uploads the ZIP, extracts and normalizes the dataset, and triggers the initial training.
      */
     initProject(file: File, epochs: number = 100, imgsz: number = 960, model: string = 'yolov8n.pt'): Observable<any> {
@@ -155,7 +158,7 @@ export class ApiService {
     }
 
     /**
-     * Loads available plant classes from the BE.
+     * Loads available object classes from the BE.
      * These classes are used in the manual annotation dropdown.
      */
     getClasses(): Observable<{ classes: string[] }> {

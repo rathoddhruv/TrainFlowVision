@@ -1,6 +1,6 @@
-# PlantPilotAI - Active Learning Platform
+# TrainFlowVision - Active Learning Platform
 
-An intelligent plant disease detection system using YOLOv8 and active learning.
+An intelligent object detection system using YOLOv8 and active learning.
 
 ## 🚀 Quick Start
 

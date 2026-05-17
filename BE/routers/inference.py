@@ -27,10 +27,22 @@ def predict_image(file: UploadFile = File(...), conf: float = Form(0.25)):
     try:
         detections = ml_service.predict(file_path, conf=conf)
         return {
+            "modelAvailable": True,
             "filename": filename,
             "url": f"/uploads/{filename}", 
             "detections": detections
         }
+    except RuntimeError as e:
+        if "No model loaded" in str(e):
+            return {
+                "modelAvailable": False,
+                "mode": "cold_start",
+                "message": "No trained model found. Manual annotation is required first.",
+                "filename": filename,
+                "url": f"/uploads/{filename}",
+                "detections": []
+            }
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         import traceback
         error_detail = f"{str(e)}\n{traceback.format_exc()}"

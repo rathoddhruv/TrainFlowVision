@@ -1,7 +1,7 @@
 #!/bin/bash
-# PlantPilotAI Development Launcher (Git Bash / Linux / Mac)
+# TrainFlowVision Development Launcher (Git Bash / Linux / Mac)
 
-echo "🌿 Starting PlantPilotAI Fullstack..."
+echo "Starting TrainFlowVision Fullstack..."
 echo ""
 
 # Detect Python command
